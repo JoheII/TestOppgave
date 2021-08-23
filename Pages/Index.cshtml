@@ -1,0 +1,89 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="form-group pb-3">
+    <div class="card col-6">
+        <p class="text-muted small">@Model.Account.Kontonavn</p>
+        <h3>Saldo: @Model.Account.Saldo.ToString("n") NOK</h3>
+    </div>
+
+    @if(Model.Categories !=null) 
+    {
+
+    <div class="dropdown mt-3">
+    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Kategori: <span class="selectedCategory"> Alle</span>
+    </button>
+        <ul class="dropdown-menu">
+            <li><a onclick="filterCategory()" href="#">Alle</a></li>
+            
+            @foreach (var item in Model.Categories)
+            {
+                <li><a onclick="filterCategory(@item.KategoriID)" href="#">@item.Beskrivelse</a></li>
+
+            }
+        </ul>
+    </div>
+
+    }
+
+    <div class="mt-2">
+        <h2>Transaksjoner</h2>
+    </div>
+    
+    @if(Model.Account.Transaksjoner != null)
+    {
+        <table id="transactionTable" class="table table-bordered table-sm" cellspacing="0" style="width:100%">                        
+            <thead>
+                <tr>
+                    <th class="hidden th-sm">KategoriID</th>
+                    <th class="th-sm" >Dato <i class="fas fa-sort text-right"></i></th>
+                    <th class="th-sm" >Beskrivelse <i class="fas fa-sort text-right"></i></th>
+                    <th class="th-sm" >Inn <i class="fas fa-sort text-right"></i></th>
+                    <th class="th-sm" >Ut <i class="fas fa-sort text-right"></i></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model.Account.Transaksjoner)
+                {
+
+                    <tr>
+                        <td value=@item.KategoriID class="hidden CategoryID">@item.KategoriID</td>
+                        <td>@item.Dato.ToShortDateString()</td>
+                        <td>@item.Beskrivelse</td>
+                        @if(item.Beloep >= 0)
+                        {
+                            <td class="moneyReceived">@item.Beloep</td>
+                        }
+                        else 
+                        {
+                            <td></td>
+                        }
+                        @if(item.Beloep < 0)
+                        {
+                            <td class="moneySpent">@item.Beloep</td>
+                        }
+                        else 
+                        {
+                            <td></td>
+                        }
+                    </tr>
+                }
+
+            </tbody>
+            <tfoot>
+                <th class="hidden">KategoriID</th>
+                <th>Dato</th>
+                <th>Beskrivelse</th>
+                <th>Inn</th>
+                <th>Ut</th>
+            </tfoot>
+        </table>
+    }
+
+    <h3>Sum inn: <span class="sumIn"></span><span class="onLoadSum">@Model.SumIn.ToString("n")</span> NOK</h3>
+    <h3>Sum ut: <span class="sumOut"></span><span class="onLoadSum">@Math.Abs(Model.SumOut).ToString("n")</span> NOK</h3>
+</div>
